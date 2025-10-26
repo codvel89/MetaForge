@@ -58,11 +58,11 @@
 - ❌ `MessageConsumerBase` clase base para workers
 
 ### Fase 9: Servicios Core
-- ❌ `Services/Security/`
-  - `IAuthenticationService`
-  - `IAuthorizationService`
-  - `IPasswordHasher`
-  - `IJwtTokenService`
+- ✅ `Services/Security/`
+  - ✅ `IPasswordHasher` + `PasswordHasher` (BCrypt)
+  - ✅ `IJwtTokenService` + `JwtTokenService` (JWT tokens)
+  - ✅ `IAuthenticationService` (login, refresh token, change password)
+  - ✅ `IAuthorizationService` (verificación de permisos)
 - ❌ `Services/Modules/`
   - `IModuleLoader`
   - `IModuleValidator`
@@ -70,8 +70,8 @@
   - `INotificationService` (publica a RabbitMQ)
 - ❌ `Services/Email/`
   - `IEmailService` (publica a RabbitMQ)
-- ❌ `Services/Audit/`
-  - `IAuditService`
+- ✅ `Services/Audit/`
+  - ✅ `IAuditService` + `AuditService` (registro de cambios)
 - ❌ `Services/Workflow/`
   - `IWorkflowEngine`
 
