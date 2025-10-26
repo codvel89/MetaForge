@@ -1,4 +1,4 @@
-namespace MetaForge.Shared;
+namespace MetaForge.Shared.Models;
 
 /// <summary>
 /// Define una agregación (suma, promedio, etc.) para una vista de lista

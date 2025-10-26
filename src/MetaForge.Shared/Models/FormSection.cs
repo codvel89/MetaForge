@@ -1,4 +1,4 @@
-namespace MetaForge.Shared;
+namespace MetaForge.Shared.Models;
 
 /// <summary>
 /// Representa una sección dentro de un formulario

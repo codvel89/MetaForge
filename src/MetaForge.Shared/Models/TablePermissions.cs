@@ -1,4 +1,4 @@
-namespace MetaForge.Shared;
+namespace MetaForge.Shared.Models;
 
 /// <summary>
 /// Define los permisos de acceso a una tabla

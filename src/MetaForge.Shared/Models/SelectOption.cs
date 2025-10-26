@@ -1,4 +1,4 @@
-namespace MetaForge.Shared;
+namespace MetaForge.Shared.Models;
 
 /// <summary>
 /// Representa una opción para controles de selección (Select, Radio, etc.)

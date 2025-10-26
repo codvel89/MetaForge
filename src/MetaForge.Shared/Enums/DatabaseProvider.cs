@@ -1,4 +1,4 @@
-namespace MetaForge.Shared;
+namespace MetaForge.Shared.Enums;
 
 /// <summary>
 /// Define el proveedor de base de datos soportado por el sistema

@@ -1,4 +1,4 @@
-namespace MetaForge.Shared;
+namespace MetaForge.Shared.Enums;
 
 /// <summary>
 /// Define los tipos de relaciones entre tablas
