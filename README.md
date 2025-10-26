@@ -1,151 +1,193 @@
 # MetaForge
 
-MetaForge es un sistema de gestión de bases de datos dinámico y modular construido en .NET 9.0, diseñado para permitir la creación, modificación y gestión de esquemas de base de datos en tiempo de ejecución sin necesidad de recompilar la aplicación.
+MetaForge is a dynamic database management system built on .NET 9.0, designed to allow creation, modification, and management of database schemas at runtime without needing to recompile the application.
 
-## 🎯 Objetivo
+## 🎯 Objective
 
-Crear una plataforma flexible que permita a los usuarios definir y gestionar estructuras de datos complejas de forma dinámica, con las siguientes capacidades:
+Create a flexible platform that allows users to define and manage complex data structures dynamically, with the following capabilities:
 
-### Características Principales
+### Main Features
 
-- **Sistema Modular con Hot-Loading**: Carga y descarga de módulos en tiempo de ejecución sin reiniciar la aplicación
-- **Gestión Dinámica de Esquemas**: Creación y modificación de tablas, campos y relaciones sin recompilación
-- **Múltiples Proveedores de Base de Datos**: Soporte para PostgreSQL, MySQL, SQL Server, SQLite y Oracle
-- **Sistema de Dependencias**: Los módulos pueden declarar dependencias de campos/tablas requeridos
-- **Extensibilidad**: Los módulos pueden extender tablas existentes agregando sus propios campos y relaciones
+- **Dynamic Schema Management**: Create and modify tables, fields, and relationships without recompilation
+- **PostgreSQL Database**: Focused support for PostgreSQL as the primary database provider
+- **Multi-tenant Architecture**: Separate system and application databases for clean separation of concerns
+- **Plugin System**: Hot-loadable modules (DLLs) with marketplace support for distribution
+- **Module Marketplace**: Version-controlled module repository with creator attribution
+- **Extensibility**: Easy to extend through modules without modifying the base code
 
-### Capacidades del Sistema
+### System Capabilities
 
-#### Definición de Metadatos
-- Tablas con metadatos completos (nombre, descripción, iconos, permisos)
-- Campos con tipos de datos flexibles y validaciones personalizadas
-- Índices y relaciones complejas (1:1, 1:N, N:M)
-- Campos calculados con expresiones dinámicas
-- Secuencias automáticas personalizables
+#### Metadata Definition
+- Tables with complete metadata (name, description, icons, permissions)
+- Fields with flexible data types and custom validations
+- Complex indexes and relationships (1:1, 1:N, N:M)
+- Computed fields with dynamic expressions
+- Customizable automatic sequences
 
-#### Validación y Reglas de Negocio
-- Validaciones por tipo (Regex, Email, Range, Custom, ConditionalRegex)
-- Reglas de negocio con triggers (BeforeInsert, AfterInsert, BeforeUpdate, AfterUpdate)
-- Transiciones de estado controladas
-- Acciones automatizadas (notificaciones, workflows, actualizaciones de campos)
+#### Validation and Business Rules
+- Type-based validations (Regex, Email, Range, Custom, ConditionalRegex)
+- Business rules with triggers (BeforeInsert, AfterInsert, BeforeUpdate, AfterUpdate)
+- Controlled state transitions
+- Automated actions (notifications, workflows, field updates)
 
-#### Interfaz de Usuario Dinámica
-- Configuración completa de formularios
-- Múltiples componentes de UI (Input, Select, TextArea, DatePicker, FileUpload, etc.)
-- Vistas de lista configurables con filtros, búsqueda y agregaciones
-- Agrupamiento y ordenamiento dinámico
-- Exportación de datos en múltiples formatos
+#### Dynamic User Interface
+- Complete form configuration
+- Multiple UI components (Input, Select, TextArea, DatePicker, FileUpload, etc.)
+- Configurable list views with filters, search, and aggregations
+- Dynamic grouping and sorting
+- Data export in multiple formats
 
-#### Sistema de Permisos
-- Control de acceso granular por tabla (Create, Read, Update, Delete)
-- Permisos basados en roles
-- Campos de solo lectura condicionales
+#### Permissions System
+- Granular access control per table (Create, Read, Update, Delete)
+- Role-based permissions
+- Conditional read-only fields
 
-#### Auditoría y Trazabilidad
-- Auditoría de cambios opcional por tabla
-- Eliminación lógica (soft delete)
-- Integración con workflows
+#### Audit and Traceability
+- Optional change auditing per table
+- Soft delete support
+- Workflow integration
 
-## 🏗️ Arquitectura
+## 🏗️ Architecture
 
-### Tecnologías
-- **.NET 9.0**: Framework base
-- **Central Package Management (CPM)**: Gestión centralizada de dependencias
-- **Nullable Reference Types**: Habilitado para mayor seguridad de tipos
-- **Implicit Usings**: Simplificación de imports
+### Technologies
+- **.NET 9.0**: Base framework
+- **Entity Framework Core 9.0.10**: ORM for dynamic data access
+- **Central Package Management (CPM)**: Centralized dependency management
+- **Nullable Reference Types**: Enabled for better type safety
+- **Implicit Usings**: Simplified imports
 
-### Estructura del Proyecto
+### Database Provider
+- **PostgreSQL** (Npgsql.EntityFrameworkCore.PostgreSQL 9.0.4) - Primary and only supported provider
+
+### Project Structure
 
 ```
 MetaForge/
 ├── src/
-│   └── MetaForge.Shared/          # Modelos compartidos del sistema
-│       ├── DatabaseConnection.cs   # Gestión de conexiones
-│       ├── TableDefinition.cs      # Definición de tablas
-│       ├── ColumnDefinition.cs     # Definición de columnas
-│       ├── RelationDefinition.cs   # Relaciones entre tablas
-│       ├── ValidationRule.cs       # Reglas de validación
-│       ├── BusinessRule.cs         # Reglas de negocio
-│       ├── TriggerDefinition.cs    # Triggers
-│       ├── FormViewConfig.cs       # Configuración de formularios
-│       ├── ListViewConfig.cs       # Configuración de listas
-│       └── ...                     # Otros modelos de soporte
-├── Directory.Packages.props        # Versiones de paquetes NuGet
-└── MetaForge.sln                   # Solución principal
+│   ├── MetaForge.Shared/              # Shared system models
+│   │   ├── DatabaseConnection.cs       # Connection management
+│   │   ├── TableDefinition.cs          # Table definition
+│   │   ├── ColumnDefinition.cs         # Column definition
+│   │   ├── RelationDefinition.cs       # Relationships between tables
+│   │   ├── ValidationRule.cs           # Validation rules
+│   │   ├── BusinessRule.cs             # Business rules
+│   │   ├── TriggerDefinition.cs        # Triggers
+│   │   ├── FormViewConfig.cs           # Form configuration
+│   │   ├── ListViewConfig.cs           # List configuration
+│   │   └── ...                         # Other supporting models
+│   │
+│   └── MetaForge.Core/                 # Main system engine
+│       ├── Context/
+│       │   ├── DynamicDbContext.cs     # EF Core dynamic DbContext
+│       │   ├── DynamicModelBuilder.cs  # EF Core model builder
+│       │   ├── DbContextFactory.cs     # Context factory
+│       │   └── MetadataDbContext.cs    # Metadata database context
+│       │
+│       ├── Entities/                   # Core system entities
+│       │   ├── System/                 # System entities (Migration, SystemSetting)
+│       │   ├── Security/               # Security entities (User, Role, Permission, ApiKey)
+│       │   ├── Audit/                  # Audit entities (AuditLog)
+│       │   ├── Notification/           # Notification entities (NotificationTemplate, EmailTemplate)
+│       │   └── Workflow/               # Workflow entities (WorkflowDefinition, WorkflowInstance, WorkflowStep)
+│       │
+│       ├── Repositories/               # Data access repositories
+│       │   ├── IMetadataRepository.cs  # Metadata repository interface
+│       │   └── MetadataRepository.cs   # Metadata repository implementation
+│       │
+│       ├── Services/                   # Business logic services
+│       │
+│       └── Messaging/                  # RabbitMQ messaging infrastructure
+│
+├── Directory.Packages.props            # NuGet package versions
+└── MetaForge.sln                       # Main solution
 ```
 
-## 🚀 Casos de Uso
+## 🚀 Use Cases
 
-1. **Sistemas ERP Personalizables**: Permite a cada cliente personalizar tablas y campos según sus necesidades específicas
-2. **Plataformas Multi-tenant**: Cada tenant puede tener su propio esquema de datos
-3. **Aplicaciones Low-Code**: Generación de aplicaciones CRUD completas sin programación
-4. **Gestión de Configuraciones Complejas**: Sistemas que requieren estructuras de datos altamente configurables
-5. **Prototipado Rápido**: Desarrollo ágil de aplicaciones de gestión de datos
+1. **Customizable ERP Systems**: Allows each client to customize tables and fields according to their specific needs
+2. **Multi-tenant Platforms**: Each tenant can have their own data schema
+3. **Low-Code Applications**: Generate complete CRUD applications without programming
+4. **Complex Configuration Management**: Systems that require highly configurable data structures
+5. **Rapid Prototyping**: Agile development of data management applications
 
-## 🎨 Principios de Diseño
+## 🎨 Design Principles
 
-- **Un Objeto por Archivo**: Cada clase, enum o interface en su propio archivo
-- **Documentación en Español**: Todos los elementos documentados con XML comments en español
-- **Soporte Multilenguaje**: El frontend soportará múltiples idiomas (el core es agnóstico)
-- **Modularidad**: Arquitectura completamente modular con carga dinámica
-- **Extensibilidad**: Fácil de extender sin modificar el código base
+- **One Object per File**: Each class, enum, or interface in its own file
+- **Spanish Documentation**: All elements documented with XML comments in Spanish (code standard)
+- **Multilanguage Support**: The frontend will support multiple languages (the core is language-agnostic)
+- **Clean Architecture**: Clear separation between system and application databases
+- **Extensibility**: Easy to extend without modifying the base code
 
-## 📋 Estado del Proyecto
+## 📋 Project Status
 
-### ✅ Completado
-- Modelos de metadatos principales
-- Sistema de validaciones
-- Configuración de formularios y listas
-- Definición de conexiones a base de datos
+### ✅ Completed
+- Main metadata models (26+ classes)
+- Validation and business rules system
+- Form and list configuration
+- Database connection definitions
+- **Dynamic DbContext with Entity Framework Core 9.0.10**
+- **PostgreSQL exclusive support**
+- **EF Core model builder from metadata**
+- **Core system entities**: System, Security, Audit, Notification, Workflow
+- **Metadata repository** with EF Core implementation
+- **Multi-database architecture**: Separate system and application databases
 
-### 🚧 En Desarrollo
-- Motor de ejecución de metadatos
-- Sistema de módulos y carga dinámica
-- Generadores de esquemas DDL
-- API REST para gestión de datos
+### 🚧 In Development
+- Generic CRUD repository
+- REST API for data management
+- Automatic migrations from metadata
 
 ### 📅 Roadmap
-- Motor de expresiones para campos calculados
-- Sistema de workflows
-- Generador de UI dinámico
-- Cliente web (frontend)
-- Herramientas de migración
+- **Module System** (High Priority):
+  - DLL-based plugin architecture with hot-loading
+  - Module template/SDK for third-party development
+  - Module installation: upload DLL, parse metadata, generate schema
+  - Module marketplace with versioning and creator management
+  - Dependency resolution between modules
+  - Module activation/deactivation without system restart
+- Expression engine for computed fields
+- Workflow system execution
+- Dynamic UI generator
+- Web client (frontend)
+- Migration tools
+- Worker services for messaging (Email, Push Notifications, WebSocket, SMS)
 
-## 🛠️ Desarrollo
+## 🛠️ Development
 
-### Requisitos
+### Requirements
 - .NET 9.0 SDK
-- Editor compatible (Visual Studio, VS Code, Rider)
+- PostgreSQL 12+
+- Compatible editor (Visual Studio, VS Code, Rider)
 
-### Comandos
+### Commands
 
 ```bash
-# Restaurar dependencias
+# Restore dependencies
 dotnet restore MetaForge.sln
 
-# Compilar
+# Build
 dotnet build MetaForge.sln
 
-# Compilar en Release
+# Build in Release
 dotnet build MetaForge.sln --configuration Release
 
-# Limpiar
+# Clean
 dotnet clean MetaForge.sln
 ```
 
-### Plataformas Soportadas
-- Any CPU (predeterminado)
+### Supported Platforms
+- Any CPU (default)
 - x64
 - x86
 
-## 📄 Licencia
+## 📄 License
 
-Por definir
+To be defined
 
-## 👥 Contribución
+## 👥 Contributing
 
-Este es un proyecto en fase inicial. Las contribuciones serán bienvenidas una vez que se establezcan las guías de contribución.
+This is an early-stage project. Contributions will be welcome once contribution guidelines are established.
 
 ---
 
-**MetaForge** - Forjando datos dinámicos con precisión
+**MetaForge** - Forging dynamic data with precision

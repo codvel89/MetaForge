@@ -16,12 +16,7 @@ public class DatabaseConnection
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Proveedor de base de datos
-    /// </summary>
-    public DatabaseProvider Provider { get; set; }
-
-    /// <summary>
-    /// Cadena de conexión
+    /// Cadena de conexión (PostgreSQL)
     /// </summary>
     public string ConnectionString { get; set; } = string.Empty;
 
