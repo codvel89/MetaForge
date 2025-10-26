@@ -46,10 +46,8 @@
 - ✅ `Services/Security/`
   - ✅ `IPasswordHasher` + `PasswordHasher` (PBKDF2)
   - ✅ `IJwtTokenService` + `JwtTokenService` (JWT tokens)
-  - ✅ `IAuthenticationService` (login, refresh token, change password)
-  - ✅ `IAuthorizationService` (permission verification)
-  - ❌ `AuthenticationService` implementation
-  - ❌ `AuthorizationService` implementation
+  - ✅ `IAuthenticationService` + `AuthenticationService` (login, refresh token, change password)
+  - ✅ `IAuthorizationService` + `AuthorizationService` (permission verification with caching)
 - ✅ `Services/Audit/`
   - ✅ `IAuditService` + `AuditService` (change tracking)
 - ✅ `Services/`
