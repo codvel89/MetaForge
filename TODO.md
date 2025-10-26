@@ -38,13 +38,13 @@
 - ❌ `EntityHistory.cs` - Historial de entidades (OPCIONAL)
 
 ### Fase 6: Entidades de Notificación
-- ❌ `NotificationTemplate.cs` - Plantillas de notificaciones
-- ❌ `EmailTemplate.cs` - Plantillas de email
+- ✅ `NotificationTemplate.cs` - Plantillas de notificaciones
+- ✅ `EmailTemplate.cs` - Plantillas de email
 
 ### Fase 7: Entidades de Workflow
-- ❌ `WorkflowDefinition.cs` - Definiciones de workflows
-- ❌ `WorkflowInstance.cs` - Instancias en ejecución
-- ❌ `WorkflowStep.cs` - Pasos de workflow
+- ✅ `WorkflowDefinition.cs` - Definiciones de workflows
+- ✅ `WorkflowInstance.cs` - Instancias en ejecución
+- ✅ `WorkflowStep.cs` - Pasos de workflow
 
 ### Fase 8: RabbitMQ
 - ❌ Agregar paquete `RabbitMQ.Client`
@@ -84,12 +84,14 @@
 - ❌ `IWorkflowRepository`
 
 ### Fase 11: Actualizar MetadataDbContext
-- ❌ Agregar DbSet para todas las nuevas entidades
-- ❌ Configurar relaciones en `OnModelCreating`
-- ❌ Índices y constraints
+- ✅ Agregar DbSet para todas las nuevas entidades
+- ✅ Configurar relaciones en `OnModelCreating`
+- ✅ Índices y constraints
 
 ### Fase 12: Crear Migraciones
-- ❌ Primera migración con todas las tablas
+- ✅ Primera migración con todas las tablas
+- ✅ MetadataDbContextFactory para design-time
+- ✅ Configurar propiedades object como Ignore (se manejan en runtime)
 
 ### Fase 13: Workers (proyecto separado)
 - ❌ Crear `MetaForge.Workers` project
@@ -110,4 +112,6 @@
 
 ## 🎯 Próximo Paso
 
-Continuar con Fase 3: Completar entidades del sistema (Module, ModuleDependency, SystemSetting)
+Fase 8: RabbitMQ - Agregar infraestructura de mensajería
+Fase 9: Servicios Core - Implementar servicios básicos
+Fase 10: Repositorios - Crear repositorios para las entidades

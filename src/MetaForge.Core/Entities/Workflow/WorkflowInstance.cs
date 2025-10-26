@@ -23,7 +23,26 @@ public class WorkflowInstance
     /// <summary>
     /// Datos de contexto en JSON
     /// </summary>
-    public string? ContextData { get; set; }
+    public string Context { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Datos de contexto en JSON (alias para compatibilidad)
+    /// </summary>
+    public string? ContextData
+    {
+        get => Context;
+        set => Context = value ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Resultado de la ejecución
+    /// </summary>
+    public string? Result { get; set; }
+
+    /// <summary>
+    /// Error de la ejecución
+    /// </summary>
+    public string? Error { get; set; }
 
     /// <summary>
     /// Paso actual en ejecución
@@ -48,7 +67,7 @@ public class WorkflowInstance
     /// <summary>
     /// Usuario que inició el workflow
     /// </summary>
-    public int? StartedBy { get; set; }
+    public string? StartedBy { get; set; }
 
     /// <summary>
     /// Workflow definición

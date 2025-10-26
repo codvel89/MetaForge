@@ -33,7 +33,17 @@ public class EmailTemplate
     /// <summary>
     /// Cuerpo del email en texto plano
     /// </summary>
-    public string? TextBody { get; set; }
+    public string TextBody { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Descripción de la plantilla
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Categoría de la plantilla
+    /// </summary>
+    public string? Category { get; set; }
 
     /// <summary>
     /// Email del remitente

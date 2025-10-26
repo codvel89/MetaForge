@@ -6,6 +6,11 @@ namespace MetaForge.Core.Entities.Security;
 public class UserRole
 {
     /// <summary>
+    /// Identificador único
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
     /// ID del usuario
     /// </summary>
     public int UserId { get; set; }

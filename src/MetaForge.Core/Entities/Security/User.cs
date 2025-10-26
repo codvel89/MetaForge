@@ -26,9 +26,24 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
 
     /// <summary>
+    /// Nombre
+    /// </summary>
+    public string? FirstName { get; set; }
+
+    /// <summary>
+    /// Apellido
+    /// </summary>
+    public string? LastName { get; set; }
+
+    /// <summary>
     /// Nombre completo
     /// </summary>
     public string? FullName { get; set; }
+
+    /// <summary>
+    /// Teléfono
+    /// </summary>
+    public string? Phone { get; set; }
 
     /// <summary>
     /// Indica si el usuario está activo
@@ -64,4 +79,9 @@ public class User
     /// Roles del usuario
     /// </summary>
     public List<UserRole> UserRoles { get; set; } = new();
+
+    /// <summary>
+    /// Claves API del usuario
+    /// </summary>
+    public List<ApiKey> ApiKeys { get; set; } = new();
 }

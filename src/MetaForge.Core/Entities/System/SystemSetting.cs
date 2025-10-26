@@ -26,6 +26,11 @@ public class SystemSetting
     public string? Description { get; set; }
 
     /// <summary>
+    /// Categoría de la configuración
+    /// </summary>
+    public string? Category { get; set; }
+
+    /// <summary>
     /// Tipo de dato (string, int, bool, json)
     /// </summary>
     public string DataType { get; set; } = "string";

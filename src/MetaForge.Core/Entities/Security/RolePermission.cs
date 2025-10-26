@@ -6,6 +6,11 @@ namespace MetaForge.Core.Entities.Security;
 public class RolePermission
 {
     /// <summary>
+    /// Identificador único
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
     /// ID del rol
     /// </summary>
     public int RoleId { get; set; }

@@ -21,7 +21,22 @@ public class Migration
     public string Version { get; set; } = string.Empty;
 
     /// <summary>
+    /// Descripción de la migración
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Usuario que aplicó la migración
+    /// </summary>
+    public string? AppliedBy { get; set; }
+
+    /// <summary>
     /// Fecha y hora de ejecución
+    /// </summary>
+    public DateTime AppliedAt { get; set; }
+
+    /// <summary>
+    /// Fecha y hora de ejecución (para compatibilidad)
     /// </summary>
     public DateTime ExecutedAt { get; set; }
 

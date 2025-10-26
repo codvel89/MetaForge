@@ -41,6 +41,20 @@ public class WorkflowDefinition
     public string StepsDefinition { get; set; } = string.Empty;
 
     /// <summary>
+    /// Definición completa del workflow en JSON (alias)
+    /// </summary>
+    public string Definition
+    {
+        get => StepsDefinition;
+        set => StepsDefinition = value;
+    }
+
+    /// <summary>
+    /// Categoría del workflow
+    /// </summary>
+    public string? Category { get; set; }
+
+    /// <summary>
     /// Indica si el workflow está activo
     /// </summary>
     public bool IsActive { get; set; } = true;
@@ -48,7 +62,7 @@ public class WorkflowDefinition
     /// <summary>
     /// Versión del workflow
     /// </summary>
-    public int Version { get; set; } = 1;
+    public string Version { get; set; } = "1.0";
 
     /// <summary>
     /// Fecha de creación

@@ -16,6 +16,16 @@ public class Permission
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
+    /// Recurso al que aplica el permiso (ej: "users", "tables")
+    /// </summary>
+    public string Resource { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Acción del permiso (ej: "create", "read", "update", "delete")
+    /// </summary>
+    public string Action { get; set; } = string.Empty;
+
+    /// <summary>
     /// Nombre visible del permiso
     /// </summary>
     public string DisplayName { get; set; } = string.Empty;

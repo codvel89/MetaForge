@@ -21,6 +21,15 @@ public class WorkflowStep
     public int StepNumber { get; set; }
 
     /// <summary>
+    /// Orden del paso
+    /// </summary>
+    public int StepOrder
+    {
+        get => StepNumber;
+        set => StepNumber = value;
+    }
+
+    /// <summary>
     /// Nombre del paso
     /// </summary>
     public string StepName { get; set; } = string.Empty;
@@ -39,6 +48,11 @@ public class WorkflowStep
     /// Output del paso en JSON
     /// </summary>
     public string? Output { get; set; }
+
+    /// <summary>
+    /// Error del paso
+    /// </summary>
+    public string? Error { get; set; }
 
     /// <summary>
     /// Mensaje de error si falló

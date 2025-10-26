@@ -1,5 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using MetaForge.Shared;
+using MetaForge.Core.Entities.System;
+using MetaForge.Core.Entities.Security;
+using MetaForge.Core.Entities.Audit;
+using MetaForge.Core.Entities.Notification;
+using MetaForge.Core.Entities.Workflow;
 
 namespace MetaForge.Core.Context;
 
@@ -25,6 +30,71 @@ public class MetadataDbContext : DbContext
     /// </summary>
     public DbSet<DatabaseConnection> DatabaseConnections { get; set; } = null!;
 
+    // System Entities
+    /// <summary>
+    /// Historial de migraciones
+    /// </summary>
+    public DbSet<Migration> Migrations { get; set; } = null!;
+
+    /// <summary>
+    /// Módulos instalados
+    /// </summary>
+    public DbSet<Module> Modules { get; set; } = null!;
+
+    /// <summary>
+    /// Configuraciones del sistema
+    /// </summary>
+    public DbSet<SystemSetting> SystemSettings { get; set; } = null!;
+
+    // Security Entities
+    /// <summary>
+    /// Usuarios del sistema
+    /// </summary>
+    public DbSet<User> Users { get; set; } = null!;
+
+    /// <summary>
+    /// Roles del sistema
+    /// </summary>
+    public DbSet<Role> Roles { get; set; } = null!;
+
+    /// <summary>
+    /// Permisos del sistema
+    /// </summary>
+    public DbSet<Permission> Permissions { get; set; } = null!;
+
+    /// <summary>
+    /// Claves de API
+    /// </summary>
+    public DbSet<ApiKey> ApiKeys { get; set; } = null!;
+
+    // Audit Entities
+    /// <summary>
+    /// Registro de auditoría
+    /// </summary>
+    public DbSet<AuditLog> AuditLogs { get; set; } = null!;
+
+    // Notification Entities
+    /// <summary>
+    /// Plantillas de notificación
+    /// </summary>
+    public DbSet<NotificationTemplate> NotificationTemplates { get; set; } = null!;
+
+    /// <summary>
+    /// Plantillas de email
+    /// </summary>
+    public DbSet<EmailTemplate> EmailTemplates { get; set; } = null!;
+
+    // Workflow Entities
+    /// <summary>
+    /// Definiciones de workflows
+    /// </summary>
+    public DbSet<WorkflowDefinition> WorkflowDefinitions { get; set; } = null!;
+
+    /// <summary>
+    /// Instancias de workflows en ejecución
+    /// </summary>
+    public DbSet<WorkflowInstance> WorkflowInstances { get; set; } = null!;
+
     /// <summary>
     /// Configuración del modelo
     /// </summary>
@@ -34,6 +104,11 @@ public class MetadataDbContext : DbContext
 
         ConfigureTableDefinition(modelBuilder);
         ConfigureDatabaseConnection(modelBuilder);
+        ConfigureSystemEntities(modelBuilder);
+        ConfigureSecurityEntities(modelBuilder);
+        ConfigureAuditEntities(modelBuilder);
+        ConfigureNotificationEntities(modelBuilder);
+        ConfigureWorkflowEntities(modelBuilder);
     }
 
     /// <summary>
@@ -73,12 +148,21 @@ public class MetadataDbContext : DbContext
                     rules.WithOwner();
                     rules.Property<int>("Id").ValueGeneratedOnAdd();
                     rules.HasKey("Id");
+                    
+                    // Ignorar propiedades object - se manejan como JSON en runtime
+                    rules.Ignore(r => r.Min);
+                    rules.Ignore(r => r.Max);
                 });
 
                 columns.OwnsOne(c => c.FormConfig, config =>
                 {
                     config.ToTable("FieldFormConfigs", "metaforge");
                     config.WithOwner();
+                    
+                    // Ignorar propiedades object (Min, Max, Step) - se manejan como JSON en runtime
+                    config.Ignore(f => f.Min);
+                    config.Ignore(f => f.Max);
+                    config.Ignore(f => f.Step);
                     
                     config.OwnsMany(f => f.Options, opts =>
                     {
@@ -169,6 +253,308 @@ public class MetadataDbContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(500);
 
             entity.HasIndex(e => e.Name).IsUnique();
+        });
+    }
+
+    /// <summary>
+    /// Configura las entidades del sistema
+    /// </summary>
+    private void ConfigureSystemEntities(ModelBuilder modelBuilder)
+    {
+        // Migration
+        modelBuilder.Entity<Migration>(entity =>
+        {
+            entity.ToTable("Migrations", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Version).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.AppliedBy).HasMaxLength(100);
+            entity.HasIndex(e => e.Version).IsUnique();
+            entity.HasIndex(e => e.AppliedAt);
+        });
+
+        // Module
+        modelBuilder.Entity<Module>(entity =>
+        {
+            entity.ToTable("Modules", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.DisplayName).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Version).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Author).HasMaxLength(200);
+            entity.Property(e => e.AssemblyPath).HasMaxLength(500);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.HasIndex(e => e.IsInstalled);
+            entity.HasIndex(e => e.IsActive);
+        });
+
+        // ModuleDependency
+        modelBuilder.Entity<ModuleDependency>(entity =>
+        {
+            entity.ToTable("ModuleDependencies", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.RequiredModuleName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.MinVersion).HasMaxLength(50);
+            
+            entity.HasOne(e => e.Module)
+                .WithMany(m => m.Dependencies)
+                .HasForeignKey(e => e.ModuleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => new { e.ModuleId, e.RequiredModuleName }).IsUnique();
+        });
+
+        // SystemSetting
+        modelBuilder.Entity<SystemSetting>(entity =>
+        {
+            entity.ToTable("SystemSettings", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Key).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Value).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Category).HasMaxLength(100);
+            entity.HasIndex(e => e.Key).IsUnique();
+            entity.HasIndex(e => e.Category);
+        });
+    }
+
+    /// <summary>
+    /// Configura las entidades de seguridad
+    /// </summary>
+    private void ConfigureSecurityEntities(ModelBuilder modelBuilder)
+    {
+        // User
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("Users", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.PasswordHash).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.LastName).HasMaxLength(100);
+            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.HasIndex(e => e.Username).IsUnique();
+            entity.HasIndex(e => e.Email).IsUnique();
+            entity.HasIndex(e => e.IsActive);
+        });
+
+        // Role
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.ToTable("Roles", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.HasIndex(e => e.IsSystemRole);
+        });
+
+        // Permission
+        modelBuilder.Entity<Permission>(entity =>
+        {
+            entity.ToTable("Permissions", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Resource).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Action).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.HasIndex(e => new { e.Resource, e.Action }).IsUnique();
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        // UserRole (Many-to-Many)
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.ToTable("UserRoles", "metaforge");
+            entity.HasKey(e => e.Id);
+            
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(e => e.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => new { e.UserId, e.RoleId }).IsUnique();
+        });
+
+        // RolePermission (Many-to-Many)
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity.ToTable("RolePermissions", "metaforge");
+            entity.HasKey(e => e.Id);
+            
+            entity.HasOne(e => e.Role)
+                .WithMany(r => r.RolePermissions)
+                .HasForeignKey(e => e.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Permission)
+                .WithMany(p => p.RolePermissions)
+                .HasForeignKey(e => e.PermissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => new { e.RoleId, e.PermissionId }).IsUnique();
+        });
+
+        // ApiKey
+        modelBuilder.Entity<ApiKey>(entity =>
+        {
+            entity.ToTable("ApiKeys", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Key).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.ApiKeys)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.Key).IsUnique();
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => e.ExpiresAt);
+        });
+    }
+
+    /// <summary>
+    /// Configura las entidades de auditoría
+    /// </summary>
+    private void ConfigureAuditEntities(ModelBuilder modelBuilder)
+    {
+        // AuditLog
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.ToTable("AuditLogs", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.EntityName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.EntityId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Action).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Changes).IsRequired();
+            entity.Property(e => e.PerformedBy).HasMaxLength(100);
+            entity.Property(e => e.IpAddress).HasMaxLength(50);
+            entity.Property(e => e.UserAgent).HasMaxLength(500);
+            
+            entity.HasIndex(e => new { e.EntityName, e.EntityId });
+            entity.HasIndex(e => e.PerformedAt);
+            entity.HasIndex(e => e.PerformedBy);
+            entity.HasIndex(e => e.Action);
+        });
+    }
+
+    /// <summary>
+    /// Configura las entidades de notificación
+    /// </summary>
+    private void ConfigureNotificationEntities(ModelBuilder modelBuilder)
+    {
+        // NotificationTemplate
+        modelBuilder.Entity<NotificationTemplate>(entity =>
+        {
+            entity.ToTable("NotificationTemplates", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Code).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Subject).HasMaxLength(500);
+            entity.Property(e => e.Body).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Category).HasMaxLength(100);
+            
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => e.Category);
+        });
+
+        // EmailTemplate
+        modelBuilder.Entity<EmailTemplate>(entity =>
+        {
+            entity.ToTable("EmailTemplates", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Code).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Subject).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.HtmlBody).IsRequired();
+            entity.Property(e => e.TextBody).IsRequired();
+            entity.Property(e => e.FromEmail).HasMaxLength(255);
+            entity.Property(e => e.FromName).HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Category).HasMaxLength(100);
+            
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => e.Category);
+        });
+    }
+
+    /// <summary>
+    /// Configura las entidades de workflow
+    /// </summary>
+    private void ConfigureWorkflowEntities(ModelBuilder modelBuilder)
+    {
+        // WorkflowDefinition
+        modelBuilder.Entity<WorkflowDefinition>(entity =>
+        {
+            entity.ToTable("WorkflowDefinitions", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Code).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Version).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Definition).IsRequired();
+            entity.Property(e => e.Category).HasMaxLength(100);
+            
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.IsActive);
+            entity.HasIndex(e => e.Category);
+        });
+
+        // WorkflowInstance
+        modelBuilder.Entity<WorkflowInstance>(entity =>
+        {
+            entity.ToTable("WorkflowInstances", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Context).IsRequired();
+            entity.Property(e => e.Result).HasMaxLength(1000);
+            entity.Property(e => e.Error).HasMaxLength(2000);
+            entity.Property(e => e.StartedBy).HasMaxLength(100);
+            
+            entity.HasOne(e => e.WorkflowDefinition)
+                .WithMany(w => w.Instances)
+                .HasForeignKey(e => e.WorkflowDefinitionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.WorkflowDefinitionId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.StartedAt);
+            entity.HasIndex(e => e.StartedBy);
+        });
+
+        // WorkflowStep
+        modelBuilder.Entity<WorkflowStep>(entity =>
+        {
+            entity.ToTable("WorkflowSteps", "metaforge");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.StepName).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Status).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Input).HasMaxLength(2000);
+            entity.Property(e => e.Output).HasMaxLength(2000);
+            entity.Property(e => e.Error).HasMaxLength(2000);
+            
+            entity.HasOne(e => e.WorkflowInstance)
+                .WithMany(w => w.Steps)
+                .HasForeignKey(e => e.WorkflowInstanceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.WorkflowInstanceId);
+            entity.HasIndex(e => e.StepOrder);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.StartedAt);
         });
     }
 }

@@ -31,6 +31,15 @@ public class Role
     public bool IsSystem { get; set; }
 
     /// <summary>
+    /// Indica si es un rol del sistema (no editable) - alias
+    /// </summary>
+    public bool IsSystemRole
+    {
+        get => IsSystem;
+        set => IsSystem = value;
+    }
+
+    /// <summary>
     /// Fecha de creación
     /// </summary>
     public DateTime CreatedAt { get; set; }

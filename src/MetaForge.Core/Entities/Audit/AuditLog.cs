@@ -26,6 +26,11 @@ public class AuditLog
     public string Action { get; set; } = string.Empty;
 
     /// <summary>
+    /// Cambios realizados (JSON con before/after)
+    /// </summary>
+    public string Changes { get; set; } = string.Empty;
+
+    /// <summary>
     /// Valores anteriores (JSON)
     /// </summary>
     public string? OldValues { get; set; }
@@ -38,6 +43,11 @@ public class AuditLog
     /// <summary>
     /// Usuario que realizó la acción
     /// </summary>
+    public string? PerformedBy { get; set; }
+
+    /// <summary>
+    /// ID del usuario que realizó la acción
+    /// </summary>
     public int? UserId { get; set; }
 
     /// <summary>
@@ -47,6 +57,11 @@ public class AuditLog
 
     /// <summary>
     /// Fecha y hora de la acción
+    /// </summary>
+    public DateTime PerformedAt { get; set; }
+
+    /// <summary>
+    /// Fecha y hora de la acción (para compatibilidad)
     /// </summary>
     public DateTime Timestamp { get; set; }
 

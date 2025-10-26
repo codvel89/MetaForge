@@ -21,6 +21,20 @@ public class ApiKey
     public string KeyHash { get; set; } = string.Empty;
 
     /// <summary>
+    /// La clave API completa (para compatibilidad con configuración)
+    /// </summary>
+    public string Key
+    {
+        get => KeyHash;
+        set => KeyHash = value;
+    }
+
+    /// <summary>
+    /// Descripción de la clave
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
     /// Prefijo visible de la clave (ej: "pk_live_")
     /// </summary>
     public string KeyPrefix { get; set; } = string.Empty;
@@ -29,6 +43,11 @@ public class ApiKey
     /// ID del usuario dueño de la clave
     /// </summary>
     public int UserId { get; set; }
+
+    /// <summary>
+    /// Usuario dueño de la clave
+    /// </summary>
+    public User User { get; set; } = null!;
 
     /// <summary>
     /// Indica si la clave está activa

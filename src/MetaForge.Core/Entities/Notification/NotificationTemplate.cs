@@ -28,12 +28,22 @@ public class NotificationTemplate
     /// <summary>
     /// Asunto/Título de la notificación
     /// </summary>
-    public string Subject { get; set; } = string.Empty;
+    public string? Subject { get; set; }
 
     /// <summary>
     /// Cuerpo del mensaje (puede contener placeholders)
     /// </summary>
     public string Body { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Descripción de la plantilla
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Categoría de la notificación
+    /// </summary>
+    public string? Category { get; set; }
 
     /// <summary>
     /// Datos adicionales en JSON (iconos, colores, etc.)
