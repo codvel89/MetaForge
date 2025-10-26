@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 namespace MetaForge.Core.Repositories;
 
 /// <summary>
-/// Implementación del repositorio para gestionar plantillas de notificación
+/// Implementación del repositorio para gestionar plantillas de correo electrónico
 /// </summary>
-public class NotificationTemplateRepository : INotificationTemplateRepository
+public class EmailTemplateRepository : IEmailTemplateRepository
 {
     private readonly MetadataDbContext _context;
 
-    public NotificationTemplateRepository(MetadataDbContext context)
+    public EmailTemplateRepository(MetadataDbContext context)
     {
         _context = context;
     }
@@ -19,26 +19,26 @@ public class NotificationTemplateRepository : INotificationTemplateRepository
     /// <summary>
     /// Obtiene una plantilla por su identificador
     /// </summary>
-    public async Task<NotificationTemplate?> GetByIdAsync(int id)
+    public async Task<EmailTemplate?> GetByIdAsync(int id)
     {
-        return await _context.NotificationTemplates.FindAsync(id);
+        return await _context.EmailTemplates.FindAsync(id);
     }
 
     /// <summary>
     /// Obtiene una plantilla por su código único
     /// </summary>
-    public async Task<NotificationTemplate?> GetByCodeAsync(string code)
+    public async Task<EmailTemplate?> GetByCodeAsync(string code)
     {
-        return await _context.NotificationTemplates
+        return await _context.EmailTemplates
             .FirstOrDefaultAsync(t => t.Code == code);
     }
 
     /// <summary>
     /// Obtiene todas las plantillas, opcionalmente solo las activas
     /// </summary>
-    public async Task<List<NotificationTemplate>> GetAllAsync(bool activeOnly = false)
+    public async Task<List<EmailTemplate>> GetAllAsync(bool activeOnly = false)
     {
-        var query = _context.NotificationTemplates.AsQueryable();
+        var query = _context.EmailTemplates.AsQueryable();
 
         if (activeOnly)
             query = query.Where(t => t.IsActive);
@@ -49,9 +49,9 @@ public class NotificationTemplateRepository : INotificationTemplateRepository
     /// <summary>
     /// Obtiene plantillas por categoría
     /// </summary>
-    public async Task<List<NotificationTemplate>> GetByCategoryAsync(string category)
+    public async Task<List<EmailTemplate>> GetByCategoryAsync(string category)
     {
-        return await _context.NotificationTemplates
+        return await _context.EmailTemplates
             .Where(t => t.Category == category)
             .OrderBy(t => t.Name)
             .ToListAsync();
@@ -60,10 +60,10 @@ public class NotificationTemplateRepository : INotificationTemplateRepository
     /// <summary>
     /// Crea una nueva plantilla
     /// </summary>
-    public async Task<NotificationTemplate> CreateAsync(NotificationTemplate template)
+    public async Task<EmailTemplate> CreateAsync(EmailTemplate template)
     {
         template.CreatedAt = DateTime.UtcNow;
-        _context.NotificationTemplates.Add(template);
+        _context.EmailTemplates.Add(template);
         await _context.SaveChangesAsync();
         return template;
     }
@@ -71,10 +71,10 @@ public class NotificationTemplateRepository : INotificationTemplateRepository
     /// <summary>
     /// Actualiza una plantilla existente
     /// </summary>
-    public async Task<NotificationTemplate> UpdateAsync(NotificationTemplate template)
+    public async Task<EmailTemplate> UpdateAsync(EmailTemplate template)
     {
         template.UpdatedAt = DateTime.UtcNow;
-        _context.NotificationTemplates.Update(template);
+        _context.EmailTemplates.Update(template);
         await _context.SaveChangesAsync();
         return template;
     }
@@ -84,10 +84,10 @@ public class NotificationTemplateRepository : INotificationTemplateRepository
     /// </summary>
     public async Task DeleteAsync(int id)
     {
-        var template = await _context.NotificationTemplates.FindAsync(id);
+        var template = await _context.EmailTemplates.FindAsync(id);
         if (template != null)
         {
-            _context.NotificationTemplates.Remove(template);
+            _context.EmailTemplates.Remove(template);
             await _context.SaveChangesAsync();
         }
     }

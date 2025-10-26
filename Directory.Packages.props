@@ -18,5 +18,8 @@
     
     <!-- Microsoft Extensions -->
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.10" />
+    
+    <!-- Messaging -->
+    <PackageVersion Include="RabbitMQ.Client" Version="6.8.1" />
   </ItemGroup>
 </Project>

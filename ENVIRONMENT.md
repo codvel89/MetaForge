@@ -34,6 +34,23 @@ JWT_SECRET_KEY=your-super-secret-key-minimum-32-chars-long
 - Generate a strong random key for production
 - Changing this key will invalidate all existing tokens
 
+### RabbitMQ Configuration
+
+```bash
+# RabbitMQ connection settings
+RABBITMQ_HOST=localhost
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+RABBITMQ_VHOST=/
+```
+
+**Notes:**
+- RabbitMQ is used for asynchronous messaging (emails, notifications, workflows)
+- All values have sensible defaults for local development
+- In production, use strong credentials and consider TLS/SSL connections
+- The virtual host (`RABBITMQ_VHOST`) allows for environment isolation
+
 ## Optional Configuration (Stored in Database)
 
 The following configurations are stored in the `SystemSettings` table and can be modified through the Designer UI:
@@ -147,6 +164,12 @@ export DB_SYSTEM_NAME=metaforge_dev
 export DB_SYSTEM_USER=postgres
 export DB_SYSTEM_PASSWORD=postgres
 export JWT_SECRET_KEY=dev-secret-key-at-least-32-characters-long
+
+export RABBITMQ_HOST=localhost
+export RABBITMQ_PORT=5672
+export RABBITMQ_USER=guest
+export RABBITMQ_PASSWORD=guest
+export RABBITMQ_VHOST=/
 ```
 
 ### Production
@@ -158,6 +181,12 @@ export DB_SYSTEM_NAME=metaforge_system
 export DB_SYSTEM_USER=metaforge_admin
 export DB_SYSTEM_PASSWORD=$(cat /secrets/db_password)
 export JWT_SECRET_KEY=$(cat /secrets/jwt_secret)
+
+export RABBITMQ_HOST=rabbitmq.production.com
+export RABBITMQ_PORT=5672
+export RABBITMQ_USER=metaforge_mq
+export RABBITMQ_PASSWORD=$(cat /secrets/rabbitmq_password)
+export RABBITMQ_VHOST=/metaforge
 ```
 
 ## Verification
