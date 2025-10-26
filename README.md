@@ -120,6 +120,8 @@ MetaForge/
 
 ## 📋 Project Status
 
+**See [TODO.md](TODO.md) for detailed development progress and roadmap.**
+
 ### ✅ Completed
 - Main metadata models (26+ classes)
 - Validation and business rules system
@@ -131,11 +133,14 @@ MetaForge/
 - **Core system entities**: System, Security, Audit, Notification, Workflow
 - **Metadata repository** with EF Core implementation
 - **Multi-database architecture**: Separate system and application databases
+- **Security services**: PBKDF2 password hashing, JWT tokens, audit logging
+- **Settings service**: Dynamic configuration from database
+- **Initial EF Core migration** with all system tables
 
 ### 🚧 In Development
+- **Phase 10**: Repository pattern implementation (Data Access Layer)
+- Authentication and Authorization service implementations
 - Generic CRUD repository
-- REST API for data management
-- Automatic migrations from metadata
 
 ### 📅 Roadmap
 - **Module System** (High Priority):

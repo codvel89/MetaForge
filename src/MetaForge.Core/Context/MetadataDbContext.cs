@@ -96,6 +96,27 @@ public class MetadataDbContext : DbContext
     public DbSet<WorkflowInstance> WorkflowInstances { get; set; } = null!;
 
     /// <summary>
+    /// Pasos de workflows
+    /// </summary>
+    public DbSet<WorkflowStep> WorkflowSteps { get; set; } = null!;
+
+    // Join Tables
+    /// <summary>
+    /// Relación usuarios-roles
+    /// </summary>
+    public DbSet<UserRole> UserRoles { get; set; } = null!;
+
+    /// <summary>
+    /// Relación roles-permisos
+    /// </summary>
+    public DbSet<RolePermission> RolePermissions { get; set; } = null!;
+
+    /// <summary>
+    /// Dependencias de módulos
+    /// </summary>
+    public DbSet<ModuleDependency> ModuleDependencies { get; set; } = null!;
+
+    /// <summary>
     /// Configuración del modelo
     /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)

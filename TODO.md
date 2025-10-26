@@ -1,126 +1,147 @@
-# MetaForge.Core - Refactorización en Progreso
+# MetaForge.Core - Development Progress
 
-## ✅ Completado
+## ✅ Completed
 
-### Fase 1: Limpieza
-- ✅ Removido soporte para MySQL y SQL Server
-- ✅ Solo PostgreSQL como proveedor
-- ✅ Actualizado `DatabaseProvider` enum
-- ✅ Simplificado `DbContextFactory`
+### Phase 1: Cleanup
+- ✅ Removed MySQL and SQL Server support
+- ✅ PostgreSQL as exclusive provider
+- ✅ Updated `DatabaseProvider` enum
+- ✅ Simplified `DbContextFactory`
 
-### Fase 2: Reorganización
-- ✅ Creada nueva estructura de carpetas
-- ✅ Movido `MetadataDbContext` a `Context/`
-- ✅ Movido repositorios a `Repositories/`
-- ✅ Movido `DbContextFactory` a `Factories/`
-- ✅ Actualizado namespaces
+### Phase 2: Reorganization
+- ✅ Created new folder structure
+- ✅ Moved `MetadataDbContext` to `Context/`
+- ✅ Moved repositories to `Repositories/`
+- ✅ Moved `DbContextFactory` to `Factories/`
+- ✅ Updated namespaces
+
+### Phase 3: System Entities
+- ✅ `Migration.cs` - Migration history
+- ✅ `Module.cs` - Installed modules
+- ✅ `ModuleDependency.cs` - Module dependencies
+- ✅ `SystemSetting.cs` - Global configuration
+
+### Phase 4: Security Entities
+- ✅ `User.cs` - System users
+- ✅ `Role.cs` - Roles
+- ✅ `Permission.cs` - Granular permissions
+- ✅ `UserRole.cs` - User-role relationship
+- ✅ `RolePermission.cs` - Role-permission relationship
+- ✅ `ApiKey.cs` - API keys
+
+### Phase 5: Audit Entities
+- ✅ `AuditLog.cs` - Change tracking
+- ❌ `EntityHistory.cs` - Entity history (OPTIONAL)
+
+### Phase 6: Notification Entities
+- ✅ `NotificationTemplate.cs` - Notification templates
+- ✅ `EmailTemplate.cs` - Email templates
+
+### Phase 7: Workflow Entities
+- ✅ `WorkflowDefinition.cs` - Workflow definitions
+- ✅ `WorkflowInstance.cs` - Running instances
+- ✅ `WorkflowStep.cs` - Workflow steps
+
+### Phase 9: Core Services
+- ✅ `Services/Security/`
+  - ✅ `IPasswordHasher` + `PasswordHasher` (PBKDF2)
+  - ✅ `IJwtTokenService` + `JwtTokenService` (JWT tokens)
+  - ✅ `IAuthenticationService` (login, refresh token, change password)
+  - ✅ `IAuthorizationService` (permission verification)
+  - ❌ `AuthenticationService` implementation
+  - ❌ `AuthorizationService` implementation
+- ✅ `Services/Audit/`
+  - ✅ `IAuditService` + `AuditService` (change tracking)
+- ✅ `Services/`
+  - ✅ `ISettingsService` + `SettingsService` (dynamic configuration)
+
+### Phase 11: Update MetadataDbContext
+- ✅ Add DbSets for all new entities
+- ✅ Configure relationships in `OnModelCreating`
+- ✅ Indexes and constraints
+
+### Phase 12: Create Migrations
+- ✅ Initial migration with all tables
+- ✅ MetadataDbContextFactory for design-time
+- ✅ Configure object properties as Ignore (handled at runtime)
 
 ---
 
-## 🚧 Pendiente
+## 🚧 Pending
 
-### Fase 3: Entidades del Sistema
-- ✅ `Migration.cs` - Historial de migraciones
-- ✅ `Module.cs` - Módulos instalados
-- ✅ `ModuleDependency.cs` - Dependencias entre módulos
-- ✅ `SystemSetting.cs` - Configuración global
-
-### Fase 4: Entidades de Seguridad
-- ✅ `User.cs` - Usuarios del sistema
-- ✅ `Role.cs` - Roles
-- ✅ `Permission.cs` - Permisos granulares
-- ✅ `UserRole.cs` - Relación usuarios-roles
-- ✅ `RolePermission.cs` - Relación roles-permisos
-- ✅ `ApiKey.cs` - Claves de API
-
-### Fase 5: Entidades de Auditoría
-- ✅ `AuditLog.cs` - Registro de cambios
-- ❌ `EntityHistory.cs` - Historial de entidades (OPCIONAL)
-
-### Fase 6: Entidades de Notificación
-- ✅ `NotificationTemplate.cs` - Plantillas de notificaciones
-- ✅ `EmailTemplate.cs` - Plantillas de email
-
-### Fase 7: Entidades de Workflow
-- ✅ `WorkflowDefinition.cs` - Definiciones de workflows
-- ✅ `WorkflowInstance.cs` - Instancias en ejecución
-- ✅ `WorkflowStep.cs` - Pasos de workflow
-
-### Fase 8: RabbitMQ
-- ❌ Agregar paquete `RabbitMQ.Client`
-- ❌ Crear carpeta `Messaging/`
-- ❌ Definir mensajes/eventos
+### Phase 8: RabbitMQ
+- ❌ Add `RabbitMQ.Client` package
+- ❌ Create `Messaging/` folder
+- ❌ Define messages/events
   - `EmailQueuedMessage`
   - `NotificationQueuedMessage`
   - `WorkflowTriggeredMessage`
 - ❌ `IMessagePublisher` interface
 - ❌ `RabbitMQPublisher` implementation
-- ❌ `MessageConsumerBase` clase base para workers
+- ❌ `MessageConsumerBase` base class for workers
 
-### Fase 9: Servicios Core
-- ✅ `Services/Security/`
-  - ✅ `IPasswordHasher` + `PasswordHasher` (BCrypt)
-  - ✅ `IJwtTokenService` + `JwtTokenService` (JWT tokens)
-  - ✅ `IAuthenticationService` (login, refresh token, change password)
-  - ✅ `IAuthorizationService` (verificación de permisos)
+### Phase 10: Repositories
+- ✅ `IUserRepository` + `UserRepository`
+- ✅ `IRoleRepository` + `RoleRepository`
+- ✅ `IPermissionRepository` + `PermissionRepository`
+- ✅ `IModuleRepository` + `ModuleRepository`
+- ✅ `IWorkflowRepository` + `WorkflowRepository`
+- ✅ `INotificationTemplateRepository` + `NotificationTemplateRepository`
+- ✅ `IEmailTemplateRepository` + `EmailTemplateRepository`
+
+### Services (Not Started)
 - ❌ `Services/Modules/`
-  - `IModuleLoader`
-  - `IModuleValidator`
+  - `IModuleLoader` - Load DLL modules
+  - `IModuleValidator` - Validate dependencies
 - ❌ `Services/Notifications/`
-  - `INotificationService` (publica a RabbitMQ)
+  - `INotificationService` (publishes to RabbitMQ)
 - ❌ `Services/Email/`
-  - `IEmailService` (publica a RabbitMQ)
-- ✅ `Services/Audit/`
-  - ✅ `IAuditService` + `AuditService` (registro de cambios)
+  - `IEmailService` (publishes to RabbitMQ)
 - ❌ `Services/Workflow/`
-  - `IWorkflowEngine`
+  - `IWorkflowEngine` - Execute workflows
 
-### Fase 10: Repositorios
-- ❌ `IModuleRepository`
-- ❌ `IUserRepository`
-- ❌ `IRoleRepository`
-- ❌ `IPermissionRepository`
-- ❌ `IAuditLogRepository`
-- ❌ `IWorkflowRepository`
+### Phase 13: Workers (Separate Projects)
+- ❌ Create `MetaForge.Workers` project
+- ❌ `EmailWorker` - Consumes email queue
+- ❌ `NotificationWorker` - Consumes notification queue
+- ❌ `WorkflowWorker` - Executes workflows
 
-### Fase 11: Actualizar MetadataDbContext
-- ✅ Agregar DbSet para todas las nuevas entidades
-- ✅ Configurar relaciones en `OnModelCreating`
-- ✅ Índices y constraints
-
-### Fase 12: Crear Migraciones
-- ✅ Primera migración con todas las tablas
-- ✅ MetadataDbContextFactory para design-time
-- ✅ Configurar propiedades object como Ignore (se manejan en runtime)
-
-### Fase 13: Workers (proyecto separado)
-- ❌ Crear `MetaForge.Workers` project
-- ❌ `EmailWorker` - Consume cola de emails
-- ❌ `NotificationWorker` - Consume cola de notificaciones
-- ❌ `WorkflowWorker` - Ejecuta workflows
+### Projects (Not Started)
+- ❌ `MetaForge.API` - REST WebAPI
+- ❌ `MetaForge.Designer` - Blazor for admins/designers
+- ❌ `MetaForge.App` - Blazor for end users
 
 ---
 
-## 📋 Notas
+## 📋 Notes
 
-- **PostgreSQL Only**: Solo soportamos PostgreSQL para simplificar mantenimiento
-- **RabbitMQ**: Todas las colas van por RabbitMQ, no en DB
-- **Workers**: Procesos en background separados del Core
-- **Esquema**: Todo en esquema `metaforge`
+- **PostgreSQL Only**: Only PostgreSQL supported to simplify maintenance
+- **RabbitMQ**: All queues go through RabbitMQ, not database
+- **Workers**: Background processes separate from Core
+- **Schema**: Everything in `metaforge` schema
+- **No BCrypt**: Using native PBKDF2 from System.Security.Cryptography
+- **Environment Variables**: Only DB connection and JWT_SECRET_KEY required
+- **OAuth Providers**: Configured in SystemSettings database table
 
 ---
 
-## 🎯 Próximo Paso
+## 🎯 Next Steps
 
-Fase 8: RabbitMQ - Agregar infraestructura de mensajería
-Fase 10: Repositorios - Crear repositorios para las entidades
-Fase 13: MetaForge.API - Crear WebAPI REST
+**Current**: Phase 10 - Repositories (Data Access Layer)
 
-## ⚙️ Notas de Refactorización
+**Upcoming**:
+1. Implement AuthenticationService and AuthorizationService
+2. Phase 8: RabbitMQ - Messaging infrastructure
+3. MetaForge.API - REST WebAPI
+4. MetaForge.Designer - Blazor admin application
 
-- ✅ BCrypt removido, usando PBKDF2 nativo de .NET (System.Security.Cryptography)
-- ✅ Configuración por variables de entorno (Environment.GetEnvironmentVariable)
-- ✅ OAuth providers configurables en SystemSettings (no en variables de entorno)
-- ✅ ISettingsService para leer configuraciones dinámicas desde BD
-- ✅ JWT_SECRET_KEY como única variable sensible en entorno
-- ✅ Arquitectura de dos bases de datos documentada (system + app)
+## ⚙️ Refactoring Notes
+
+- ✅ BCrypt removed, using native PBKDF2 (System.Security.Cryptography)
+- ✅ Configuration via environment variables (Environment.GetEnvironmentVariable)
+- ✅ OAuth providers configurable in SystemSettings (not environment variables)
+- ✅ ISettingsService for dynamic configuration from database
+- ✅ JWT_SECRET_KEY as only sensitive environment variable
+- ✅ Two-database architecture documented (system + app)
+- ✅ Root authentication: Direct PostgreSQL (no Users table for admin)
+- ✅ End user authentication: JWT + application-level permissions
