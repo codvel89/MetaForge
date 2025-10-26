@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using MetaForge.Core.Entities.Security;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MetaForge.Core.Services.Security;
@@ -13,22 +12,22 @@ namespace MetaForge.Core.Services.Security;
 /// </summary>
 public class JwtTokenService : IJwtTokenService
 {
-    private readonly IConfiguration _configuration;
+    private readonly ISettingsService _settingsService;
     private readonly string _secretKey;
-    private readonly string _issuer;
-    private readonly string _audience;
-    private readonly int _expirationMinutes;
 
     /// <summary>
     /// Constructor
     /// </summary>
-    public JwtTokenService(IConfiguration configuration)
+    public JwtTokenService(ISettingsService settingsService)
     {
-        _configuration = configuration;
-        _secretKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey no configurada");
-        _issuer = configuration["Jwt:Issuer"] ?? "MetaForge";
-        _audience = configuration["Jwt:Audience"] ?? "MetaForge.API";
-        _expirationMinutes = int.Parse(configuration["Jwt:ExpirationMinutes"] ?? "60");
+        _settingsService = settingsService;
+        
+        // JWT_SECRET_KEY debe venir de variable de entorno (sensible)
+        _secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
+            ?? throw new InvalidOperationException("JWT_SECRET_KEY environment variable not configured");
+        
+        if (_secretKey.Length < 32)
+            throw new InvalidOperationException("JWT_SECRET_KEY must be at least 32 characters long");
     }
 
     /// <summary>
@@ -36,6 +35,11 @@ public class JwtTokenService : IJwtTokenService
     /// </summary>
     public string GenerateAccessToken(User user, IEnumerable<string> roles, IEnumerable<string> permissions)
     {
+        // Obtener configuración desde SystemSettings
+        var issuer = _settingsService.GetSettingAsync("jwt.issuer", "MetaForge").Result;
+        var audience = _settingsService.GetSettingAsync("jwt.audience", "MetaForge.API").Result;
+        var expirationMinutes = _settingsService.GetSettingAsync<int>("jwt.expiration_minutes", 60).Result;
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -60,10 +64,10 @@ public class JwtTokenService : IJwtTokenService
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _issuer,
-            audience: _audience,
+            issuer: issuer,
+            audience: audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_expirationMinutes),
+            expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
             signingCredentials: credentials
         );
 
@@ -88,6 +92,9 @@ public class JwtTokenService : IJwtTokenService
     {
         try
         {
+            var issuer = _settingsService.GetSettingAsync("jwt.issuer", "MetaForge").Result;
+            var audience = _settingsService.GetSettingAsync("jwt.audience", "MetaForge.API").Result;
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_secretKey);
 
@@ -96,9 +103,9 @@ public class JwtTokenService : IJwtTokenService
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
-                ValidIssuer = _issuer,
+                ValidIssuer = issuer,
                 ValidateAudience = true,
-                ValidAudience = _audience,
+                ValidAudience = audience,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             }, out SecurityToken validatedToken);

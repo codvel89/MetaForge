@@ -113,5 +113,14 @@
 ## 🎯 Próximo Paso
 
 Fase 8: RabbitMQ - Agregar infraestructura de mensajería
-Fase 9: Servicios Core - Implementar servicios básicos
 Fase 10: Repositorios - Crear repositorios para las entidades
+Fase 13: MetaForge.API - Crear WebAPI REST
+
+## ⚙️ Notas de Refactorización
+
+- ✅ BCrypt removido, usando PBKDF2 nativo de .NET (System.Security.Cryptography)
+- ✅ Configuración por variables de entorno (Environment.GetEnvironmentVariable)
+- ✅ OAuth providers configurables en SystemSettings (no en variables de entorno)
+- ✅ ISettingsService para leer configuraciones dinámicas desde BD
+- ✅ JWT_SECRET_KEY como única variable sensible en entorno
+- ✅ Arquitectura de dos bases de datos documentada (system + app)
